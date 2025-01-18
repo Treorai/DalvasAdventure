@@ -1,20 +1,19 @@
+import 'package:dalvas_adventure/dalvas_adventure.dart';
+import 'package:flame/flame.dart' show Flame;
+import 'package:flame/game.dart' show GameWidget;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MainApp());
-}
+  WidgetsFlutterBinding.ensureInitialized();
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  // Mobile Settings
+  Flame.device.fullScreen();
+  Flame.device.setLandscape();
 
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
-    );
-  }
+  // Run
+  DalvasAdventure game = DalvasAdventure();
+
+  // Recreates the game instance if kDebugMode == True
+  runApp(GameWidget(game: kDebugMode ? DalvasAdventure() : game));
 }
