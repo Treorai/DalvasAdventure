@@ -1,0 +1,53 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "screen-00.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "decoration.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "door.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "screen-00.tmx": {
+            "scale": 1,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 679,
+                "y": 550
+            }
+        },
+        "terrain.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.imagePath": "C:/Users/Watto/Documents/GitHub/DalvasAdventure/assets/images/Kings and Pigs/Sprites/TileSets",
+    "map.height": 24,
+    "map.lastUsedFormat": "tmx",
+    "map.width": 40,
+    "openFiles": [
+        "terrain.tsx",
+        "decoration.tsx",
+        "screen-00.tmx"
+    ],
+    "project": "dalvas_adventure.tiled-project",
+    "recentFiles": [
+        "door.tsx",
+        "decoration.tsx",
+        "terrain.tsx",
+        "screen-00.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 56,
+        "width": 46
+    }
+}
