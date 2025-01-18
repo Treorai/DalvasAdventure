@@ -6,7 +6,9 @@ import 'package:flame_tiled/flame_tiled.dart';
 
 class Level extends World {
   final String screenName;
-  Level({required this.screenName});
+  final Player player;
+
+  Level({required this.screenName, required this.player});
   late TiledComponent level;
 
   @override
@@ -15,14 +17,17 @@ class Level extends World {
 
     add(level);
 
-    final spawnPointsLayer = level.tileMap.getLayer<ObjectGroup>('spawn_points');
+    final spawnPointsLayer =
+        level.tileMap.getLayer<ObjectGroup>('spawn_points');
 
-    for(final spawnPoint in spawnPointsLayer!.objects) {
+    for (final spawnPoint in spawnPointsLayer!.objects) {
       switch (spawnPoint.class_) {
         case 'Player':
-          final player = Player(entity: 'King', position: Vector2(spawnPoint.x, spawnPoint.y));
+          player.position = Vector2(spawnPoint.x, spawnPoint.y);
           add(player);
-        break;
+          
+          break;
+        default:
       }
     }
 
