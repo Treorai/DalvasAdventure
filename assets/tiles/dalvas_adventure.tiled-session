@@ -17,11 +17,11 @@
             "scaleInEditor": 1
         },
         "screen-00.tmx": {
-            "scale": 1,
-            "selectedLayer": 2,
+            "scale": 1.5,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 679,
-                "y": 550
+                "x": 604.3333333333333,
+                "y": 490
             }
         },
         "terrain.tsx": {
@@ -34,16 +34,14 @@
     "map.lastUsedFormat": "tmx",
     "map.width": 40,
     "openFiles": [
-        "terrain.tsx",
-        "decoration.tsx",
         "screen-00.tmx"
     ],
     "project": "dalvas_adventure.tiled-project",
     "recentFiles": [
+        "screen-00.tmx",
         "door.tsx",
         "decoration.tsx",
-        "terrain.tsx",
-        "screen-00.tmx"
+        "terrain.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
