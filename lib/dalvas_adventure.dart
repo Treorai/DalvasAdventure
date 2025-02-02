@@ -60,17 +60,17 @@ class DalvasAdventure extends FlameGame
       case JoystickDirection.left:
       case JoystickDirection.upLeft:
       case JoystickDirection.downLeft:
-        player.playerdirection = PlayerDirection.left;
+      player.horizontalMovement = -1;
         break;
       case JoystickDirection.right:
       case JoystickDirection.upRight:
       case JoystickDirection.downRight:
-        player.playerdirection = PlayerDirection.right;
+      player.horizontalMovement = 1;
         break;
       case JoystickDirection.up:
       case JoystickDirection.down:
       default:
-        player.playerdirection = PlayerDirection.idle;
+      player.horizontalMovement = 0;
     }
   }
 }
