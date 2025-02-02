@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dalvas_adventure/modules/actors/player.dart';
+import 'package:dalvas_adventure/modules/common/player.dart';
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 
