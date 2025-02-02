@@ -1,7 +1,10 @@
 import 'dart:async';
 
 import 'package:dalvas_adventure/dalvas_adventure.dart';
+import 'package:dalvas_adventure/modules/collisions/collision_block.dart';
+import 'package:dalvas_adventure/modules/collisions/collision_handler.dart';
 import 'package:flame/components.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 enum PlayerState { idle, running, attacking }
@@ -21,9 +24,11 @@ class Player extends SpriteAnimationGroupComponent
   double horizontalMovement = 0;
   double moveSpeed = 100;
   Vector2 velocity = Vector2.zero();
+  List<CollisionBlock> collisionBlocks = [];
 
   @override
   FutureOr<void> onLoad() {
+    debugMode = kDebugMode;
     _loadAllAnimations();
     return super.onLoad();
   }
@@ -32,14 +37,19 @@ class Player extends SpriteAnimationGroupComponent
   void update(double dt) {
     _updatePlayerState();
     _updatePlayerMoviment(dt);
+    _checkForHorizontalCollisions();
     super.update(dt);
   }
 
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     horizontalMovement = 0;
-    final isLeftKeyPressed = keysPressed.contains(LogicalKeyboardKey.arrowLeft) || keysPressed.contains(LogicalKeyboardKey.keyA);
-    final isRightKeyPressed = keysPressed.contains(LogicalKeyboardKey.arrowRight) || keysPressed.contains(LogicalKeyboardKey.keyD);
+    final isLeftKeyPressed =
+        keysPressed.contains(LogicalKeyboardKey.arrowLeft) ||
+            keysPressed.contains(LogicalKeyboardKey.keyA);
+    final isRightKeyPressed =
+        keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
+            keysPressed.contains(LogicalKeyboardKey.keyD);
 
     horizontalMovement += isLeftKeyPressed ? -1 : 0;
     horizontalMovement += isRightKeyPressed ? 1 : 0;
@@ -74,20 +84,37 @@ class Player extends SpriteAnimationGroupComponent
     velocity.x = horizontalMovement * moveSpeed;
     position.x += velocity.x * dt;
   }
-  
+
   void _updatePlayerState() {
     PlayerState playerState = PlayerState.idle;
 
-    if(velocity.x < 0 && scale.x > 0){
+    if (velocity.x < 0 && scale.x > 0) {
       flipHorizontallyAroundCenter();
-    } else if(velocity.x > 0 && scale.x <0 ){
+    } else if (velocity.x > 0 && scale.x < 0) {
       flipHorizontallyAroundCenter();
     }
 
-    if(velocity.x > 0 || velocity.x < 0){
+    if (velocity.x > 0 || velocity.x < 0) {
       playerState = PlayerState.running;
     }
-    
+
     current = playerState;
+  }
+
+  void _checkForHorizontalCollisions() {
+    for (final block in collisionBlocks) {
+      if (!block.isPlatform) {
+        if (checkCollision(this, block)) {
+          if (velocity.x > 0) {
+            velocity.x = 0.01;
+            position.x = block.x - width;
+          }
+          if (velocity.x < 0) {
+            velocity.x = -0.01;
+            position.x = block.x + width + block.width;
+          }
+        }
+      }
+    }
   }
 }
