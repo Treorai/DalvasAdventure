@@ -1,3 +1,5 @@
+import 'dart:io' as dio show Platform;
+
 import 'package:dalvas_adventure/dalvas_adventure.dart';
 import 'package:flame/flame.dart' show Flame;
 import 'package:flame/game.dart' show GameWidget;
@@ -8,8 +10,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Mobile Settings
-  await Flame.device.fullScreen();
-  await Flame.device.setLandscape();
+  if (!dio.Platform.isWindows) {
+    await Flame.device.fullScreen();
+    await Flame.device.setLandscape();
+  }
 
   // Run
   DalvasAdventure game = DalvasAdventure();
