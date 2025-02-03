@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dalvas_adventure/modules/common/player.dart';
+import 'package:dalvas_adventure/modules/player/player.dart';
 import 'package:dalvas_adventure/modules/common/level.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';

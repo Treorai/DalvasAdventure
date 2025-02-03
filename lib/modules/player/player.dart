@@ -1,8 +1,11 @@
 import 'dart:async';
 
+import 'package:dalvas_adventure/core/utils/extended_position_component.dart';
 import 'package:dalvas_adventure/dalvas_adventure.dart';
 import 'package:dalvas_adventure/modules/collisions/collision_block.dart';
 import 'package:dalvas_adventure/modules/collisions/collision_handler.dart';
+import 'package:dalvas_adventure/modules/player/player_hitbox.dart';
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +13,10 @@ import 'package:flutter/services.dart';
 enum PlayerState { idle, running, attacking, jumping, falling }
 
 class Player extends SpriteAnimationGroupComponent
-    with HasGameRef<DalvasAdventure>, KeyboardHandler {
+    with
+        HasGameRef<DalvasAdventure>,
+        KeyboardHandler,
+        ExtendedPositionComponent {
   String entity;
   Player({this.entity = 'King', position}) : super(position: position);
 
@@ -36,10 +42,22 @@ class Player extends SpriteAnimationGroupComponent
   int jumpsLeft = 3;
   bool inputingJumpAction = false;
   List<CollisionBlock> collisionBlocks = [];
+  PlayerHitbox hitbox = PlayerHitbox(
+    offsetX: 23,
+    offsetY: 21,
+    width: 18,
+    height: 23,
+  );
 
   @override
   FutureOr<void> onLoad() {
-    debugMode = kDebugMode;
+    if (kDebugMode) {
+      debugMode = true;
+      add(RectangleHitbox(
+        position: Vector2(hitbox.offsetX, hitbox.offsetY),
+        size: Vector2(hitbox.width, hitbox.height),
+      ));
+    }
     _loadAllAnimations();
     return super.onLoad();
   }
@@ -77,7 +95,7 @@ class Player extends SpriteAnimationGroupComponent
     idleAnimation = _spriteAnimation('Idle', 11, Vector2(78, 58));
     runAnimation = _spriteAnimation('Run', 8, Vector2(78, 58));
     attackAnimation = _spriteAnimation('Attack', 3, Vector2(78, 58));
-    jumpAnimation = _spriteAnimation('Jump', 1, Vector2(78,58));
+    jumpAnimation = _spriteAnimation('Jump', 1, Vector2(78, 58));
     fallAnimation = _spriteAnimation('Fall', 1, Vector2(78, 58));
 
     /// List of all animations
@@ -101,7 +119,7 @@ class Player extends SpriteAnimationGroupComponent
 
   /// Handles character's x axis movement. The y axis movement is handled by the gravity propriety.
   void _updatePlayerMoviment(double dt) {
-    if(inputingJumpAction && jumpsLeft > 0){
+    if (inputingJumpAction && jumpsLeft > 0) {
       _jumpPlayer(dt);
     }
     velocity.x = horizontalMovement * moveSpeed;
@@ -109,30 +127,30 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   void _updatePlayerState() {
-    if(isOnGround) {
+    if (isOnGround) {
       _resetJumps();
     }
 
     PlayerState playerState = PlayerState.idle;
 
     if (velocity.x < 0 && scale.x > 0) {
-      flipHorizontallyAroundCenter();
+      flipHorizontallyAroundAnchor(Anchor(0.1, 0));
     } else if (velocity.x > 0 && scale.x < 0) {
-      flipHorizontallyAroundCenter();
+      flipHorizontallyAroundAnchor(Anchor(0.1, 0));
     }
 
     if (velocity.x > 0 || velocity.x < 0) {
       playerState = PlayerState.running;
     }
 
-    if (velocity.y > 0 && !isOnGround){
+    if (velocity.y > 0 && !isOnGround) {
       playerState = PlayerState.falling;
     }
-    if (velocity.y < 0 && !isOnGround){
+    if (velocity.y < 0 && !isOnGround) {
       playerState = PlayerState.jumping;
     }
 
-    if(isAttacking){
+    if (isAttacking) {
       playerState = PlayerState.attacking;
     }
 
@@ -145,12 +163,12 @@ class Player extends SpriteAnimationGroupComponent
         if (checkCollision(this, block)) {
           if (velocity.x > 0) {
             velocity.x = 0.01;
-            position.x = block.x - width;
+            position.x = block.x - hitbox.offsetX - hitbox.width;
             break;
           }
           if (velocity.x < 0) {
             velocity.x = -0.01;
-            position.x = block.x + width + block.width;
+            position.x = block.x + hitbox.width + hitbox.offsetX + block.width;
             break;
           }
         }
@@ -171,7 +189,7 @@ class Player extends SpriteAnimationGroupComponent
         if (checkCollision(this, block)) {
           if (velocity.y > 0) {
             velocity.y = 0;
-            position.y = block.y - height;
+            position.y = block.y - hitbox.height - hitbox.offsetY;
             isOnGround = true;
             break;
           }
@@ -181,19 +199,19 @@ class Player extends SpriteAnimationGroupComponent
         if (checkCollision(this, block)) {
           if (velocity.y > 0) {
             velocity.y = 0;
-            position.y = block.y - height;
+            position.y = block.y - hitbox.height - hitbox.offsetY;
             isOnGround = true;
             break;
           }
-          if(velocity.y < 0) {
+          if (velocity.y < 0) {
             velocity.y = 0;
-            position.y = block.y + block.height;
+            position.y = block.y + block.height - hitbox.offsetY;
           }
         }
       }
     }
   }
-  
+
   void _jumpPlayer(double dt) {
     isOnGround = false;
     velocity.y = -_jumpForce;
@@ -202,7 +220,7 @@ class Player extends SpriteAnimationGroupComponent
     jumpsLeft += -1;
   }
 
-  void _resetJumps(){
+  void _resetJumps() {
     jumpsLeft = 3;
   }
 }

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:dalvas_adventure/modules/collisions/collision_block.dart';
-import 'package:dalvas_adventure/modules/common/player.dart';
+import 'package:dalvas_adventure/modules/player/player.dart';
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 
