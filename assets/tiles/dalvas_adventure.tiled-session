@@ -17,11 +17,14 @@
             "scaleInEditor": 1
         },
         "screen-00.tmx": {
-            "scale": 1.5,
-            "selectedLayer": 1,
+            "expandedGroupLayers": [
+                6
+            ],
+            "scale": 1,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": 604.3333333333333,
-                "y": 490
+                "x": 645.5,
+                "y": 477
             }
         },
         "terrain.tsx": {

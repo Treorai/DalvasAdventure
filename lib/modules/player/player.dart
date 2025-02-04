@@ -41,6 +41,7 @@ class Player extends SpriteAnimationGroupComponent
   bool isOnGround = false;
   int jumpsLeft = 3;
   bool inputingJumpAction = false;
+  late Vector2 lastStaticPosition;
   List<CollisionBlock> collisionBlocks = [];
   PlayerHitbox hitbox = PlayerHitbox(
     offsetX: 23,
@@ -58,6 +59,7 @@ class Player extends SpriteAnimationGroupComponent
         size: Vector2(hitbox.width, hitbox.height),
       ));
     }
+    lastStaticPosition = Vector2(position.x, position.y);
     _loadAllAnimations();
     return super.onLoad();
   }
@@ -74,6 +76,10 @@ class Player extends SpriteAnimationGroupComponent
 
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    if (keysPressed.contains(LogicalKeyboardKey.keyR)) {
+      position = lastStaticPosition;
+    }
+
     horizontalMovement = 0;
     final isLeftKeyPressed =
         keysPressed.contains(LogicalKeyboardKey.arrowLeft) ||
@@ -123,10 +129,16 @@ class Player extends SpriteAnimationGroupComponent
       _jumpPlayer(dt);
     }
     velocity.x = horizontalMovement * moveSpeed;
+    if (isOnGround) {
+      moveSpeed += 1;
+    }
     position.x += velocity.x * dt;
   }
 
   void _updatePlayerState() {
+    if (velocity.x == 0 && isOnGround) {
+      _resetMoveSpeed();
+    }
     if (isOnGround) {
       _resetJumps();
     }
@@ -161,6 +173,7 @@ class Player extends SpriteAnimationGroupComponent
     for (final block in collisionBlocks) {
       if (!block.isPlatform) {
         if (checkCollision(this, block)) {
+          velocity.y = velocity.y / 1.3;
           if (velocity.x > 0) {
             velocity.x = 0.01;
             position.x = block.x - hitbox.offsetX - hitbox.width;
@@ -190,7 +203,7 @@ class Player extends SpriteAnimationGroupComponent
           if (velocity.y > 0) {
             velocity.y = 0;
             position.y = block.y - hitbox.height - hitbox.offsetY;
-            isOnGround = true;
+            _setIsOnGround();
             break;
           }
         }
@@ -200,7 +213,7 @@ class Player extends SpriteAnimationGroupComponent
           if (velocity.y > 0) {
             velocity.y = 0;
             position.y = block.y - hitbox.height - hitbox.offsetY;
-            isOnGround = true;
+            _setIsOnGround();
             break;
           }
           if (velocity.y < 0) {
@@ -213,7 +226,7 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   void _jumpPlayer(double dt) {
-    isOnGround = false;
+    _setIsNotOnGround();
     velocity.y = -_jumpForce;
     position.y += velocity.y * dt;
     inputingJumpAction = false;
@@ -222,5 +235,18 @@ class Player extends SpriteAnimationGroupComponent
 
   void _resetJumps() {
     jumpsLeft = 3;
+  }
+
+  void _resetMoveSpeed() {
+    moveSpeed = 100;
+  }
+
+  void _setIsOnGround() {
+    isOnGround = true;
+    lastStaticPosition = Vector2(position.x, position.y);
+  }
+
+  void _setIsNotOnGround() {
+    isOnGround = false;
   }
 }
