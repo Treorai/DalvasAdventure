@@ -173,7 +173,10 @@ class Player extends SpriteAnimationGroupComponent
     for (final block in collisionBlocks) {
       if (!block.isPlatform) {
         if (checkCollision(this, block)) {
+
+          // Hold walls
           velocity.y = velocity.y / 1.3;
+          
           if (velocity.x > 0) {
             velocity.x = 0.01;
             position.x = block.x - hitbox.offsetX - hitbox.width;
