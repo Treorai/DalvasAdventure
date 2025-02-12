@@ -4,7 +4,6 @@ import 'package:dalvas_adventure/core/utils/extended_position_component.dart';
 import 'package:dalvas_adventure/dalvas_adventure.dart';
 import 'package:dalvas_adventure/modules/collisions/collision_block.dart';
 import 'package:dalvas_adventure/modules/collisions/collision_handler.dart';
-import 'package:dalvas_adventure/modules/player/player_hitbox.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/foundation.dart';
@@ -43,21 +42,27 @@ class Player extends SpriteAnimationGroupComponent
   bool inputingJumpAction = false;
   late Vector2 lastStaticPosition;
   List<CollisionBlock> collisionBlocks = [];
-  PlayerHitbox hitbox = PlayerHitbox(
+  /* PlayerHitbox hitbox = PlayerHitbox(
     offsetX: 23,
     offsetY: 21,
     width: 18,
     height: 23,
+  ); */
+  RectangleHitbox hitbox = RectangleHitbox(
+    position: Vector2(23, 21),
+    size: Vector2(18, 23),
   );
+  /* CircleHitbox weaponHitbox = CircleHitbox(
+    position: Vector2(11, 33),
+    radius: 4,
+  ); */
 
   @override
   FutureOr<void> onLoad() {
+
     if (kDebugMode) {
       debugMode = true;
-      add(RectangleHitbox(
-        position: Vector2(hitbox.offsetX, hitbox.offsetY),
-        size: Vector2(hitbox.width, hitbox.height),
-      ));
+      add(hitbox);
     }
     lastStaticPosition = Vector2(position.x, position.y);
     _loadAllAnimations();
@@ -80,6 +85,11 @@ class Player extends SpriteAnimationGroupComponent
       position = lastStaticPosition;
     }
 
+    // Debug key
+    if (keysPressed.contains(LogicalKeyboardKey.keyF)) {
+      flipVerticallyAroundHitboxCenter(hitbox);
+    }
+
     horizontalMovement = 0;
     final isLeftKeyPressed =
         keysPressed.contains(LogicalKeyboardKey.arrowLeft) ||
@@ -93,6 +103,12 @@ class Player extends SpriteAnimationGroupComponent
 
     inputingJumpAction = keysPressed.contains(LogicalKeyboardKey.space);
     isAttacking = keysPressed.contains(LogicalKeyboardKey.keyQ);
+
+    if (isOnGround &&
+        (keysPressed.contains(LogicalKeyboardKey.keyS) ||
+            keysPressed.contains(LogicalKeyboardKey.arrowDown))) {
+      position.y = position.y += 2;
+    }
 
     return super.onKeyEvent(event, keysPressed);
   }
@@ -146,9 +162,9 @@ class Player extends SpriteAnimationGroupComponent
     PlayerState playerState = PlayerState.idle;
 
     if (velocity.x < 0 && scale.x > 0) {
-      flipHorizontallyAroundAnchor(Anchor(0.1, 0));
+      flipHorizontallyAroundHitboxCenter(hitbox);
     } else if (velocity.x > 0 && scale.x < 0) {
-      flipHorizontallyAroundAnchor(Anchor(0.1, 0));
+      flipHorizontallyAroundHitboxCenter(hitbox);
     }
 
     if (velocity.x > 0 || velocity.x < 0) {
@@ -173,18 +189,18 @@ class Player extends SpriteAnimationGroupComponent
     for (final block in collisionBlocks) {
       if (!block.isPlatform) {
         if (checkCollision(this, block)) {
-
           // Hold walls
           velocity.y = velocity.y / 1.3;
-          
+
           if (velocity.x > 0) {
             velocity.x = 0.01;
-            position.x = block.x - hitbox.offsetX - hitbox.width;
+            position.x = block.x - hitbox.position.x - hitbox.width;
             break;
           }
           if (velocity.x < 0) {
             velocity.x = -0.01;
-            position.x = block.x + hitbox.width + hitbox.offsetX + block.width;
+            position.x =
+                block.x + hitbox.width + hitbox.position.x + block.width;
             break;
           }
         }
@@ -205,7 +221,7 @@ class Player extends SpriteAnimationGroupComponent
         if (checkCollision(this, block)) {
           if (velocity.y > 0) {
             velocity.y = 0;
-            position.y = block.y - hitbox.height - hitbox.offsetY;
+            position.y = block.y - hitbox.height - hitbox.position.y;
             _setIsOnGround();
             break;
           }
@@ -215,13 +231,13 @@ class Player extends SpriteAnimationGroupComponent
         if (checkCollision(this, block)) {
           if (velocity.y > 0) {
             velocity.y = 0;
-            position.y = block.y - hitbox.height - hitbox.offsetY;
+            position.y = block.y - hitbox.height - hitbox.position.y;
             _setIsOnGround();
             break;
           }
           if (velocity.y < 0) {
             velocity.y = 0;
-            position.y = block.y + block.height - hitbox.offsetY;
+            position.y = block.y + block.height - hitbox.position.y;
           }
         }
       }
