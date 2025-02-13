@@ -52,10 +52,10 @@ class Player extends SpriteAnimationGroupComponent
     position: Vector2(23, 21),
     size: Vector2(18, 23),
   );
-  /* CircleHitbox weaponHitbox = CircleHitbox(
+  CircleHitbox weaponHitbox = CircleHitbox(
     position: Vector2(11, 33),
     radius: 4,
-  ); */
+  );
 
   @override
   FutureOr<void> onLoad() {
@@ -63,6 +63,7 @@ class Player extends SpriteAnimationGroupComponent
     if (kDebugMode) {
       debugMode = true;
       add(hitbox);
+      add(weaponHitbox);
     }
     lastStaticPosition = Vector2(position.x, position.y);
     _loadAllAnimations();
@@ -88,6 +89,7 @@ class Player extends SpriteAnimationGroupComponent
     // Debug key
     if (keysPressed.contains(LogicalKeyboardKey.keyF)) {
       flipVerticallyAroundHitboxCenter(hitbox);
+      //flipHorizontallyAroundHitboxCenter(weaponHitbox);
     }
 
     horizontalMovement = 0;
