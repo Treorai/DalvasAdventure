@@ -53,10 +53,10 @@ class Player extends SpriteAnimationGroupComponent
     size: Vector2(18, 23),
   );
   CircleHitbox weaponHitbox = CircleHitbox(
-    position: Vector2(11, 33),
-    //position: Vector2(15, 38),
+    //position: Vector2(11, 33),
+    position: Vector2(15, 38),
     radius: 4,
-    //anchor: Anchor.center,
+    anchor: Anchor.center,
   );
 
   @override
@@ -91,7 +91,7 @@ class Player extends SpriteAnimationGroupComponent
     // Debug key
     if (keysPressed.contains(LogicalKeyboardKey.keyF)) {
       //flipVerticallyAroundHitboxCenter(hitbox);
-      flipHorizontallyAroundHitboxCenter(weaponHitbox);
+      flipHorizontallyAroundHitbox(weaponHitbox);
     }
 
     horizontalMovement = 0;
